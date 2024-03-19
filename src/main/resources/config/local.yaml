@@ -19,9 +19,9 @@ db:
 
 deployment:
   app:
-    runtime: 4.5.1
-  region: us-east-2
-  workers: 1
-  workerType: MICRO
+    runtime: "4.5.1"
+  region: "us-east-2"
+  workers: "1"
+  workerType: "MICRO"
   
     
