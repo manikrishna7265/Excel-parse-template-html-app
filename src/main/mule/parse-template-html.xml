@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="f722bd64-b3c9-4d84-a64c-da4dd8f69a81" >
+		<http:listener-connection host="0.0.0.0" port="8082" readTimeout="90000"/>
+	</http:listener-config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="f8c7581b-8cf2-401b-bfbc-b4978d2515d9" >
+		<file:connection workingDir="#[vars.path1]" />
+	</file:config>
+	<flow name="parse-template-htmlFlow2" doc:id="da18a7ea-0901-4c6f-8c90-e9835fd4f717" >
+		<http:listener doc:name="Listener" doc:id="31094420-fbe8-4176-a563-4bf2cfc69a46" config-ref="HTTP_Listener_config" path="/pfile"/>
+		<file:read doc:name="Read" doc:id="148655c3-51c9-48d6-8f68-424ecce5e6af" config-ref="File_Config" outputMimeType="application/xlsx" path="V:\Krishna\Mulesoft\Excel-data\mani.xlsx"/>
+		<ee:transform doc:name="Transform Message" doc:id="38556e63-bd09-48ec-96ca-fe546ba1cfa7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload.Sheet1]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="ipath" ><![CDATA[%dw 2.0
+output application/java
+var ipath = "V:\Krishna\Mulesoft\Excel-data" as String
+---
+ipath
+]]></ee:set-variable>
+				<ee:set-variable variableName="ifile" ><![CDATA[%dw 2.0
+output application/java
+var ifile = "\mani.xlsx" as String
+---
+ifile]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<batch:job jobName="get-records-from-payload" doc:id="d9abf292-156e-46ba-b056-96fc77db1099" blockSize="1" schedulingStrategy="ROUND_ROBIN" maxConcurrency="16">
+			<batch:process-records >
+				<batch:step name="Batch_Step2" doc:id="710c3b12-a12b-46b7-b5fe-6b867b16d005" >
+					<ee:transform doc:name="Transform Message" doc:id="bcf8afb1-d30b-4466-9792-c4ee3b89becb">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+{
+	//Calibration report//
+    "OWNER" : "M/s HPCL RAJASTHAN REFINERY LIMITED",
+    "CONSULTANT":"ENGINEERS INDIA LIMITED",
+    "CONTRACTOR" : "TATA PROJECTS LTD",
+    "PROJECT" : "HRRL EPCC 04 PACKAGE DCU",
+    "IOA No" : "HRRL/LOA/2019/S4 Dated 27-12-2019",
+    "FORMAT No" : "B224-DCU-TPL-114-IN-QD-F-06      Rev.01",
+    "Ref.JP No" : "B224-DCU-TPL-114-IN-QD-0003",
+    "Ref.ITP No": "B224-DCU-TPL-114-IN-QD-0024",
+    "REPORT No" : payload."REPORT NO",
+    "REFERENCE DRAWING & DOC No" : payload."Drawing NO",
+    "Sno": payload."S.no",
+    
+    /*Instrument & Master details*/
+"Type1" : payload."TYPE ",
+"Tag No1" : payload."TAG NO:",
+"Make2" : payload."Make:",
+"Model No1" : payload."MODEL NO",
+"Serial NO1" :payload."SERIAL NO",
+"Cal Range1" : payload."CAL RANGE",
+"Cal Date1" : payload.Date,
+"Type2": payload.*"TYPE "[1],
+"Make1": payload."MAKE:",
+"Model No2": payload.*"MODEL NO"[1],
+"Serial NO2": payload.*"SERIAL NO"[1],
+"Cal Range2" : payload.*"CAL RANGE"[1],
+"TESTING AGENCY": payload."TESTING AGENCY",
+"Ref. T/C No" : payload."Ref. T/C No.",
+    
+    
+    /*SIno*/
+     "Sno1": 1,
+     "Sno2": 2,
+     "Sno3": 3,
+     "Sno4": 4,
+     "Sno5": 5,
+   
+    
+    /*--------(i)input---------*/
+    "i1.0" :payload.*"1.0"[0],
+    "i2.0" :payload.*"2.0"[0],
+    "i3.0" :payload.*"3.0"[0],
+    "i4.0" :payload.*"4.0"[0],
+    "i5.0" :payload.*"5.0"[0],
+    
+    /* -----------(d)Input-------------*/
+    "d1.0" :payload.*"1.0"[1],
+    "d2.0" :payload.*"2.0"[1],
+    "d3.0" :payload.*"3.0"[1],
+    "d4.0" :payload.*"4.0"[1],
+    "d5.0" :payload.*"5.0"[1],
+    
+    /*-----------oa(o/p ascending)------------ */
+    "oa1.0" :payload.*"1.0"[2],
+    "oa2.0" :payload.*"2.0"[2],
+    "oa3.0" :payload.*"3.0"[2],
+    "oa4.0" :payload.*"4.0"[2],
+    "oa5.0" :payload.*"5.0"[2],
+    
+    /*------------ae(ascending error)---------- */
+    "ae1.0" :payload.*"1.0"[3] as String {format: "0.000", roundMode:"DOWN"},
+    "ae2.0" :payload.*"2.0"[3]as String {format: "0.000", roundMode:"DOWN"},
+    "ae3.0" :payload.*"3.0"[3]as String {format: "0.000", roundMode:"DOWN"},
+    "ae4.0" :payload.*"4.0"[3]as String {format: "0.000", roundMode:"DOWN"},
+    "ae5.0" :payload.*"5.0"[3]as String {format: "0.000", roundMode:"DOWN"},
+/*---------------------*/
+	"Remark" : "   ",
+
+
+
+/*------------(od) o/p descending-----------*/
+    "od1.0" :payload.*"1.0"[4],
+    "od2.0" :payload.*"2.0"[4],
+    "od3.0" :payload.*"3.0"[4],
+    "od4.0" :payload.*"4.0"[4],
+    "od5.0" :payload.*"5.0"[4],
+/*------------(de) descending error--------------*/
+
+    "de1.0" :payload.*"1.0"[5] as String {format: "0.000", roundMode:"DOWN"},
+    "de2.0" :payload.*"2.0"[5]as String {format: "0.000", roundMode:"DOWN"},
+    "de3.0" :payload.*"3.0"[5]as String {format: "0.000", roundMode:"DOWN"},
+    "de4.0" :payload.*"4.0"[5]as String {format: "0.000", roundMode:"DOWN"},
+    "de5.0" :payload.*"5.0"[5]as String {format: "0.000", roundMode:"DOWN"},
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables>
+							<ee:set-variable variableName="file1" ><![CDATA[%dw 2.0
+output application/java
+var file1 = payload."S.no" ++ "Report.html" as String
+---
+file1]]></ee:set-variable>
+							<ee:set-variable variableName="path1" ><![CDATA[%dw 2.0
+output application/java
+var path1 = "V:\Krishna\Mulesoft\Excel-data\out-excel" as String
+---
+path1
+]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+					<parse-template doc:name="Parse Template" doc:id="eda8fc99-d6bc-42b7-bd85-085604b3e15a" location="F:\edu\html file\Table1.html" />
+					<file:write doc:name="Write" doc:id="d30752a4-eb60-44e1-a517-8ef52bb1042b" config-ref="File_Config" path="#[vars.path1 ++ vars.file1 as String]" />
+				</batch:step>
+			</batch:process-records>
+		</batch:job>
+	</flow>
+</mule>

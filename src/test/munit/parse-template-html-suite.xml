@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="parse-template-html-suite.xml" />
+	<munit:test name="parse-template-htmlFlow2-test-success" doc:id="40c41d40-2b64-4c04-9fdc-9e9d32aea011" >
+		<munit:behavior >
+			<munit-tools:spy doc:name="Spy Transform Message" doc:id="f08a13d5-a615-4198-a1db-f54b5c7086d8" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="38556e63-bd09-48ec-96ca-fe546ba1cfa7" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="1" attributeName="Sno" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="d3f20078-b204-47cd-bea1-017782b5652e" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import parsetemplatehtmlFlow2testsuccess::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="b4d6cdc0-3a99-4bc8-8653-16ca0a5a45e8" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import parsetemplatehtmlFlow2testsuccess::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="1cdfaafa-74b7-4a54-afda-bdb7855ec0c7" >
+				<munit:payload value="#[readUrl('classpath://parsetemplatehtmlFlow2testsuccess\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://parsetemplatehtmlFlow2testsuccess\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to parse-template-htmlFlow2" doc:id="720ef2b1-f0ac-4da5-8c91-2c79a0d2e7f9" name="parse-template-htmlFlow2"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="ba12e69c-c2c5-4728-8576-5d5227d60c74" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import parsetemplatehtmlFlow2testsuccess::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Transform Message" doc:id="f02faa07-bb72-4e0d-896b-58b873ed2630" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="38556e63-bd09-48ec-96ca-fe546ba1cfa7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

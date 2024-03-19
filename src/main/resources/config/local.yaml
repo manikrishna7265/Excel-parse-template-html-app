@@ -1,0 +1,27 @@
+http:
+  listener:
+    host: "localhost"
+    port: "8081"
+    path: "/api/*"
+    
+  listener1:
+    host: "localhost"
+    port: "8082"
+    path: "/pfile"
+
+db:
+  mysql:
+    host: "localhost"
+    port: "3306"
+    user: "root"
+    password: "Krishna.2"
+    database: "emp"
+
+deployment:
+  app:
+    runtime: 4.5.1
+  region: us-east-2
+  workers: 1
+  workerType: MICRO
+  
+    
